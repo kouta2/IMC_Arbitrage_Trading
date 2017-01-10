@@ -28,6 +28,34 @@ public class StrategyHandler
         BOOK = order_book;
     }
 
+    public double calculateMarketPrice(ArrayList<Order> bids, ArrayList<Order> asks)
+    {
+        double bid_price = 0;
+        int total_volume = 0;
+        for(Order o : bids)
+        {
+            if(o.price != -1)
+            {
+                bid_price += o.price * o.volume;
+                total_volume = o.volume;
+            }
+        }
+
+        bid_price /= total_volume;
+        double ask_price = 0;
+        total_volume = 0;
+        for(Order o : asks)
+        {
+            if(o.price != -1)
+            {
+                ask_price += o.price * o.volume;
+                total_volume += o.volume;
+            }
+        }
+        ask_price /= total_volume;
+        return (bid_price + ask_price)/2;
+    }
+
     /*
     Looks for opportunities based on the new RetailState
     */
