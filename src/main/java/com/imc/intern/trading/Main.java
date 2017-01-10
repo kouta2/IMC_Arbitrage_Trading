@@ -35,7 +35,7 @@ public class Main
      */
     public static void add_handlers(RemoteExchangeView rmt_exch) // , HashMap<Long, MyOrder> my_orders, HashMap<Double, Integer> my_bids, HashMap<Double, Integer> my_asks, HashSet<OwnTrade> transactions, ArrayList<Order> bids, ArrayList<Order> asks)
     {
-        rmt_exch.subscribe(Symbol.of(BOOK), new HitterHandler(rmt_exch));
+        rmt_exch.subscribe(Symbol.of(BOOK), new HitterHandler(rmt_exch, BOOK));
     }
 
     public static void main(String[] args) throws Exception
@@ -50,6 +50,4 @@ public class Main
         client.start();
         // client.stop();
     }
-
-
 }

@@ -15,13 +15,18 @@ import java.util.List;
  */
 public class StrategyHandler
 {
-    private static final double target = 20;
-    private static final double fees = .1;
-    private static double position_offset = 0;
-    private static int position = 0;
-    private static final String BOOK = "AKO1";
+    private final double target = 20;
+    private final double fees = .1;
+    private double position_offset = 0;
+    private int position = 0;
+    private String BOOK;
 
     private static int count = 0;
+
+    StrategyHandler(String order_book)
+    {
+        BOOK = order_book;
+    }
 
     /*
     Looks for opportunities based on the new RetailState

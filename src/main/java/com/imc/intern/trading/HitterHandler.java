@@ -15,8 +15,8 @@ import java.util.List;
  */
 public class HitterHandler implements OrderBookHandler
 {
-    private static BookHandler book;
-    private static StrategyHandler strat;
+    private BookHandler book;
+    private StrategyHandler strat;
 
     HashMap<Long, MyOrder> my_orders = new HashMap<>(); // maps my orders to the actual order object
     HashMap<Double, Integer> my_bids = new HashMap<>(); // maps my bid prices to the total volume of my bids at that price
@@ -27,7 +27,7 @@ public class HitterHandler implements OrderBookHandler
 
     RemoteExchangeView rmt_exch;
 
-    public HitterHandler(RemoteExchangeView r)
+    public HitterHandler(RemoteExchangeView r, String order_book)
     {
         for(int i = 0; i < 3; i++)
         {
@@ -35,8 +35,8 @@ public class HitterHandler implements OrderBookHandler
             asks.add(new Order(-1, 0));
         }
         rmt_exch = r;
-        book = new BookHandler();
-        strat = new StrategyHandler();
+        book = new BookHandler(order_book);
+        strat = new StrategyHandler(order_book);
     }
 
     /*

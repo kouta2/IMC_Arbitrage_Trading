@@ -10,9 +10,13 @@ import java.util.List;
  */
 public class BookHandler
 {
-    private static final int book_size = 3;
-    private static final String BOOK = "AKO1";
+    private final int book_size = 3;
+    private String BOOK;
 
+    BookHandler(String order_book)
+    {
+        BOOK = order_book;
+    }
 
     public void udpate_book(ArrayList<Order> bids, ArrayList<Order> asks, List<RetailState.Level> curr_bids, List<RetailState.Level> curr_asks)
     {
