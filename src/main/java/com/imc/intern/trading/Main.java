@@ -21,13 +21,13 @@ public class Main
     private static final String PASSWORD = "meant trip meat wear";
     private static final String BOOK = "AKO1";
 
-    private static final int book_size = 3;
-    private static final double target = 20;
-    private static final double fees = .1;
+    private final int book_size = 3;
+    private final double target = 20;
+    private final double fees = .1;
 
-    private static int count = 0;
+    private int count = 0;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
 
     /*
