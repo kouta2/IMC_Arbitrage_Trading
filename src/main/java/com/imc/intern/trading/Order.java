@@ -5,4 +5,17 @@ package com.imc.intern.trading;
  */
 public class Order
 {
+    Order(double p, int v)
+    {
+        price = p;
+        volume = v;
+    }
+
+    public String toString()
+    {
+        return "price is: " + price + " volume is: " + volume;
+    }
+
+    double price;
+    int volume;
 }
