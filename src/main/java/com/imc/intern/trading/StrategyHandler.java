@@ -3,11 +3,13 @@ package com.imc.intern.trading;
 import com.imc.intern.exchange.client.RemoteExchangeView;
 import com.imc.intern.exchange.datamodel.Side;
 import com.imc.intern.exchange.datamodel.api.OrderType;
+import com.imc.intern.exchange.datamodel.api.OwnTrade;
 import com.imc.intern.exchange.datamodel.api.RetailState;
 import com.imc.intern.exchange.datamodel.api.Symbol;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -20,6 +22,31 @@ public class StrategyHandler
     private double position_offset = 0;
     private int position = 0;
     private String BOOK;
+
+    private HashMap<Long, MyOrder> my_orders = new HashMap<>(); // maps my orders to the actual order object
+    private HashMap<Double, Integer> my_bids = new HashMap<>(); // maps my bid prices to the total volume of my bids at that price
+    private HashMap<Double, Integer> my_asks = new HashMap<>(); // maps my ask prices to the total volume of my asks at that price
+    private HashSet<OwnTrade> transactions = new HashSet<>(); // keeps track of my transaction history
+
+    HashMap<Long, MyOrder> getMyOrders()
+    {
+        return my_orders;
+    }
+
+    HashMap<Double, Integer> getMyBids()
+    {
+        return my_bids;
+    }
+
+    HashMap<Double, Integer> getMyAsks()
+    {
+        return my_asks;
+    }
+
+    HashSet<OwnTrade> getTransactions()
+    {
+        return transactions;
+    }
 
     private static int count = 0;
 
@@ -57,11 +84,11 @@ public class StrategyHandler
     }
 
     /*
-    Looks for opportunities based on the new RetailState
+    Looks for opportunities based on the new RetailState and the state of the book
     */
     //cproctor: You can clean up some of the unused parameters. The name on this is a bit misleading as well. You don't need to pass in as parameters things that are fields, my_orders for example
     //cproctor: Consider breaking up this method as well. It's quite hard to see what the intent is. Pulling out some well named methods can help here!
-    public void create_opportunities(RemoteExchangeView rmt_exch, ArrayList<Order> bids, ArrayList<Order> asks, RetailState rtl_state, HashMap<Long, MyOrder> my_orders, HashMap<Double, Integer> my_bids, HashMap<Double, Integer> my_asks)
+    public void create_opportunities(RemoteExchangeView rmt_exch, BookHandler book, RetailState rtl_state)
     {
         List<RetailState.Level> rtl_bids = rtl_state.getBids();
         for (RetailState.Level o : rtl_bids)
@@ -102,5 +129,13 @@ public class StrategyHandler
                 }
             }
         }
+    }
+
+    void removeFromCurrentOrders(boolean bid, double price, int volume)
+    {
+        if(bid)
+            my_bids.put(price, my_bids.get(price) - volume);
+        else
+            my_asks.put(price, my_asks.get(price) - volume);
     }
 }

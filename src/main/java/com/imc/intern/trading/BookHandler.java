@@ -12,18 +12,47 @@ public class BookHandler
 {
     private final int book_size = 3;
     private String BOOK;
+    private ArrayList<Order> bids = new ArrayList<>(); // keeps track of the bids in the book
+    private ArrayList<Order> asks = new ArrayList<>(); // keeps track of the asks in the book
 
     BookHandler(String order_book)
     {
         BOOK = order_book;
+        for(int i = 0; i < 3; i++)
+        {
+            bids.add(new Order(-1, 0));
+            asks.add(new Order(-1, 0));
+        }
+    }
+
+    ArrayList<Order> getBids()
+    {
+        return bids;
+    }
+
+    ArrayList<Order> getAsks()
+    {
+        return asks;
+    }
+
+    int getBookSize()
+    {
+        return book_size;
+    }
+
+    String getBookName()
+    {
+        return BOOK;
     }
 
     //cproctor: We already talked about the duplication in this class during our one-on-one, but noting it here as a friendly reminder! :)
     //cproctor: I would expect that bids and asks would actually be members of this class. It seems a little strange to
     //pass them in as parameters and then modify. This class could be a Book class or something and just deal with maintaining
     //and providing book information.
-    public void udpate_book(ArrayList<Order> bids, ArrayList<Order> asks, List<RetailState.Level> curr_bids, List<RetailState.Level> curr_asks)
+    public void udpate_book(RetailState rtl_state)
     {
+        List<RetailState.Level> curr_bids = rtl_state.getBids();
+        List<RetailState.Level> curr_asks = rtl_state.getAsks();
         // bids
         for (int j = 0; j < Math.min(book_size, curr_bids.size()); j++)
         {
@@ -97,7 +126,7 @@ public class BookHandler
         }
     }
 
-    public void print_book(ArrayList<Order> bids, ArrayList<Order> asks)
+    public void print_book()
     {
         System.out.println("BIDS:\n" + bids.toString());
         System.out.println("ASKS:\n" + asks.toString());
