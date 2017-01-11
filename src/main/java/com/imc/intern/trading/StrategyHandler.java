@@ -59,6 +59,8 @@ public class StrategyHandler
     /*
     Looks for opportunities based on the new RetailState
     */
+    //cproctor: You can clean up some of the unused parameters. The name on this is a bit misleading as well. You don't need to pass in as parameters things that are fields, my_orders for example
+    //cproctor: Consider breaking up this method as well. It's quite hard to see what the intent is. Pulling out some well named methods can help here!
     public void create_opportunities(RemoteExchangeView rmt_exch, ArrayList<Order> bids, ArrayList<Order> asks, RetailState rtl_state, HashMap<Long, MyOrder> my_orders, HashMap<Double, Integer> my_bids, HashMap<Double, Integer> my_asks)
     {
         List<RetailState.Level> rtl_bids = rtl_state.getBids();
@@ -70,7 +72,7 @@ public class StrategyHandler
             {
                 // count++; // this is just to limit me to 2 trades for now
                 long order_id = rmt_exch.createOrder(Symbol.of(BOOK), price, volume, OrderType.IMMEDIATE_OR_CANCEL, Side.SELL);
-                if (order_id > -1)
+                if (order_id > -1) //cproctor: When will this be -1?
                 {
                     // count++;
                     my_orders.put(order_id, new MyOrder(order_id, price, volume, OrderType.GOOD_TIL_CANCEL.IMMEDIATE_OR_CANCEL, Side.SELL));

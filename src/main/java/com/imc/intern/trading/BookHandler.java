@@ -18,6 +18,10 @@ public class BookHandler
         BOOK = order_book;
     }
 
+    //cproctor: We already talked about the duplication in this class during our one-on-one, but noting it here as a friendly reminder! :)
+    //cproctor: I would expect that bids and asks would actually be members of this class. It seems a little strange to
+    //pass them in as parameters and then modify. This class could be a Book class or something and just deal with maintaining
+    //and providing book information.
     public void udpate_book(ArrayList<Order> bids, ArrayList<Order> asks, List<RetailState.Level> curr_bids, List<RetailState.Level> curr_asks)
     {
         // bids

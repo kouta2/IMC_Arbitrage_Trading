@@ -29,6 +29,7 @@ public class HitterHandler implements OrderBookHandler
 
     public HitterHandler(RemoteExchangeView r, String order_book)
     {
+        //cproctor: I don't think that you need to initialize this, looking more closely at the rest of your code
         for(int i = 0; i < 3; i++)
         {
             bids.add(new Order(-1, 0));
