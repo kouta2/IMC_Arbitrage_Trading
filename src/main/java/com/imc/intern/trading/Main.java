@@ -22,9 +22,13 @@ public class Main
     private static final String PASSWORD = "meant trip meat wear";
     private static final String BOOK = "AKO1";
 
-    private static final String TACO = "AKO.TACO";
-    private static final String BEEF = "AKO.BEEF";
-    private static final String TORTILLA = "AKO.TORTILLA";
+    // private static final String TACO = "AKO.TACO";
+    // private static final String BEEF = "AKO.BEEF";
+    // private static final String TORTILLA = "AKO.TORT";
+
+    private static final String TACO = "TACO";
+    private static final String BEEF = "BEEF";
+    private static final String TORTILLA = "TORT";
 
     private final int book_size = 3;
     private final double target = 20;
@@ -39,11 +43,10 @@ public class Main
      */
     public static void add_handlers(RemoteExchangeView rmt_exch)
     {
-        Arbitrage a = new Arbitrage(new BookHandler(TACO), new BookHandler(TORTILLA), new BookHandler(BEEF), rmt_exch);
-        rmt_exch.subscribe(Symbol.of(TACO), new HitterHandler(rmt_exch, a)); // new TacoStrategy()));
-        // rmt_exch.subscribe(Symbol.of(TORTILLA), new HitterHandler(rmt_exch, BOOK, new TortillaStrategy()));
-        // rmt_exch.subscribe(Symbol.of(BEEF), new HitterHandler(rmt_exch, BOOK, new BeefStrategy()));
-
+        HitterHandler h = new HitterHandler(rmt_exch, TACO, BEEF, TORTILLA);
+        rmt_exch.subscribe(Symbol.of(TACO), h);
+        rmt_exch.subscribe(Symbol.of(BEEF), h);
+        rmt_exch.subscribe(Symbol.of(TORTILLA), h);
     }
 
     public static void main(String[] args) throws Exception

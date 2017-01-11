@@ -5,10 +5,7 @@ import com.imc.intern.exchange.datamodel.Side;
 import com.imc.intern.exchange.datamodel.api.*;
 import com.imc.intern.exchange.datamodel.jms.ExposureUpdate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by imc on 10/01/2017.
@@ -17,11 +14,17 @@ public class HitterHandler implements OrderBookHandler
 {
     private RemoteExchangeView rmt_exch;
     private Arbitrage arb;
+    HashMap<Symbol, BookHandler> symbol_to_book;
 
-    public HitterHandler(RemoteExchangeView r, Arbitrage a)// String order_book, StrategyHandler pattern)
+
+    public HitterHandler(RemoteExchangeView r, String taco, String beef, String tortilla)// String order_book, StrategyHandler pattern)
     {
         rmt_exch = r;
-        arb = a;
+        arb = new Arbitrage(new BookHandler(taco), new BookHandler(beef), new BookHandler(tortilla), rmt_exch);
+        symbol_to_book = new HashMap<>();
+        symbol_to_book.put(Symbol.of(taco), arb.getTacoBook());
+        symbol_to_book.put(Symbol.of(beef), arb.getBeefBook());
+        symbol_to_book.put(Symbol.of(tortilla), arb.getTortillaBook());
     }
 
     /*
@@ -29,16 +32,13 @@ public class HitterHandler implements OrderBookHandler
     */
     public void handleRetailState(RetailState retailState)
     {
-        System.out.println("book is: " + retailState.getBook().toString());
-        System.out.println("bids " + retailState.getBids().toString());
-        System.out.println("asks " + retailState.getAsks().toString() + "\n");
         Symbol s = retailState.getBook();
-        if(s.toString().equals(arb.getTacoBook().toString()))
-            arb.executeTaco(retailState);
-        else if(s.toString().equals(arb.getBeefBook().toString()))
-            arb.executeBeef(retailState);
-        else
-            arb.executeTortilla(retailState);
+//        System.out.println("book is: " + s.toString());
+//        System.out.println("bids " + retailState.getBids().toString());
+//        System.out.println("asks " + retailState.getAsks().toString() + "\n");
+
+        symbol_to_book.get(s).update_book(retailState);
+        arb.executeOrders();
     }
 
     /*
@@ -54,8 +54,9 @@ public class HitterHandler implements OrderBookHandler
      */
     public void handleOwnTrade(OwnTrade trade)
     {
-        arb.removeFromCurrentOrders(trade.getOrderId());
+        // arb.removeFromCurrentOrders(trade.getOrderId());
         // System.out.println("Executed a trade!");
+        arb.handleMyOrders(trade);
     }
 
     /*
