@@ -50,6 +50,11 @@ public class StrategyHandler
 
     private static int count = 0;
 
+    StrategyHandler()
+    {
+        BOOK = "";
+    }
+
     StrategyHandler(String order_book)
     {
         BOOK = order_book;
@@ -84,13 +89,40 @@ public class StrategyHandler
     }
 
     /*
-    Looks for opportunities based on the new RetailState and the state of the book
+    Looks for opportunities based on the new RetailState and the state of the book and places orders on them
     */
     //cproctor: You can clean up some of the unused parameters. The name on this is a bit misleading as well. You don't need to pass in as parameters things that are fields, my_orders for example
     //cproctor: Consider breaking up this method as well. It's quite hard to see what the intent is. Pulling out some well named methods can help here!
-    public void create_opportunities(RemoteExchangeView rmt_exch, BookHandler book, RetailState rtl_state)
+    public void place_orders(RemoteExchangeView rmt_exch, BookHandler book, RetailState rtl_state)
     {
         List<RetailState.Level> rtl_bids = rtl_state.getBids();
+        placeOrdersOnNewBids(rmt_exch, rtl_bids, book);
+
+        List<RetailState.Level> rtl_asks = rtl_state.getAsks();
+        placeOrdersOnNewAsks(rmt_exch, rtl_asks, book);
+    }
+
+    private void placeOrdersOnNewAsks(RemoteExchangeView rmt_exch, List<RetailState.Level> rtl_asks, BookHandler book)
+    {
+        for (RetailState.Level o : rtl_asks)
+        {
+            double price = o.getPrice();
+            int volume = o.getVolume();
+            if (volume > 0 && price < target - fees - position_offset) // this order is valued higher than what I think its worth and is on the ask side
+            {
+                long order_id = rmt_exch.createOrder(Symbol.of(BOOK), price, volume, OrderType.IMMEDIATE_OR_CANCEL, Side.BUY);
+                // count++; // this is just to limit me to 2 trades for now
+                my_orders.put(order_id, new MyOrder(order_id, price, volume, OrderType.IMMEDIATE_OR_CANCEL, Side.BUY));
+                my_bids.put(price, volume);
+                position--;
+                // position_offset = position/10d;
+                System.out.println("BOUGHT!! Order price is " + price + " which is less than " + (target - fees - position_offset));
+            }
+        }
+    }
+
+    private void placeOrdersOnNewBids(RemoteExchangeView rmt_exch, List<RetailState.Level> rtl_bids, BookHandler book)
+    {
         for (RetailState.Level o : rtl_bids)
         {
             double price = o.getPrice();
@@ -99,43 +131,22 @@ public class StrategyHandler
             {
                 // count++; // this is just to limit me to 2 trades for now
                 long order_id = rmt_exch.createOrder(Symbol.of(BOOK), price, volume, OrderType.IMMEDIATE_OR_CANCEL, Side.SELL);
-                if (order_id > -1) //cproctor: When will this be -1?
-                {
-                    // count++;
-                    my_orders.put(order_id, new MyOrder(order_id, price, volume, OrderType.GOOD_TIL_CANCEL.IMMEDIATE_OR_CANCEL, Side.SELL));
-                    my_asks.put(price, volume);
-                    position++;
-                    // position_offset = position/10d;
-                    System.out.println("SOLD!!! Order price is " + price + " which is greater than " + (target + fees + position_offset));
-                }
-            }
-        }
-        List<RetailState.Level> rtl_asks = rtl_state.getAsks();
-        for (RetailState.Level o : rtl_asks)
-        {
-            double price = o.getPrice();
-            int volume = o.getVolume();
-            if (volume > 0 && price < target - fees - position_offset) // this order is valued higher than what I think its worth and is on the ask side
-            {
-                long order_id = rmt_exch.createOrder(Symbol.of(BOOK), price, volume, OrderType.IMMEDIATE_OR_CANCEL, Side.BUY);
-                if (order_id > -1)
-                {
-                    // count++; // this is just to limit me to 2 trades for now
-                    my_orders.put(order_id, new MyOrder(order_id, price, volume, OrderType.IMMEDIATE_OR_CANCEL, Side.BUY));
-                    my_bids.put(price, volume);
-                    position--;
-                    // position_offset = position/10d;
-                    System.out.println("BOUGHT!! Order price is " + price + " which is less than " + (target - fees - position_offset));
-                }
+                // count++;
+                my_orders.put(order_id, new MyOrder(order_id, price, volume, OrderType.IMMEDIATE_OR_CANCEL, Side.SELL));
+                my_asks.put(price, volume);
+                position++;
+                // position_offset = position/10d;
+                System.out.println("SOLD!!! Order price is " + price + " which is greater than " + (target + fees + position_offset));
             }
         }
     }
 
-    void removeFromCurrentOrders(boolean bid, double price, int volume)
+    void removeFromCurrentOrders(Side side, double price, int volume, long orderId)
     {
-        if(bid)
+        if(side == Side.BUY)
             my_bids.put(price, my_bids.get(price) - volume);
         else
             my_asks.put(price, my_asks.get(price) - volume);
+        my_orders.remove(orderId);
     }
 }

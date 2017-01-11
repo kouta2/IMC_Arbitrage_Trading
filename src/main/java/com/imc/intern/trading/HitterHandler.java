@@ -15,16 +15,13 @@ import java.util.List;
  */
 public class HitterHandler implements OrderBookHandler
 {
-    private BookHandler book;
-    private StrategyHandler strat;
     private RemoteExchangeView rmt_exch;
+    private Arbitrage arb;
 
-    public HitterHandler(RemoteExchangeView r, String order_book)
+    public HitterHandler(RemoteExchangeView r, Arbitrage a)// String order_book, StrategyHandler pattern)
     {
-        //cproctor: I don't think that you need to initialize this, looking more closely at the rest of your code
         rmt_exch = r;
-        book = new BookHandler(order_book);
-        strat = new StrategyHandler(order_book);
+        arb = a;
     }
 
     /*
@@ -32,14 +29,16 @@ public class HitterHandler implements OrderBookHandler
     */
     public void handleRetailState(RetailState retailState)
     {
-        List<RetailState.Level> curr_bids = retailState.getBids();
-        List<RetailState.Level> curr_asks = retailState.getAsks();
-
-        strat.create_opportunities(rmt_exch, book, retailState); // bids, asks);
-
-        book.udpate_book(retailState);
-
-        // book.print_book();
+        System.out.println("book is: " + retailState.getBook().toString());
+        System.out.println("bids " + retailState.getBids().toString());
+        System.out.println("asks " + retailState.getAsks().toString() + "\n");
+        Symbol s = retailState.getBook();
+        if(s.toString().equals(arb.getTacoBook().toString()))
+            arb.executeTaco(retailState);
+        else if(s.toString().equals(arb.getBeefBook().toString()))
+            arb.executeBeef(retailState);
+        else
+            arb.executeTortilla(retailState);
     }
 
     /*
@@ -55,17 +54,8 @@ public class HitterHandler implements OrderBookHandler
      */
     public void handleOwnTrade(OwnTrade trade)
     {
-        System.out.println("Executed a trade!");
-        // transactions.add(trade);
-        strat.getMyOrders().remove(trade.getOrderId());
-        if (trade.getSide() == Side.BUY)
-        {
-            strat.removeFromCurrentOrders(true, trade.getPrice(), trade.getVolume());
-        }
-        else // SELL
-        {
-            strat.removeFromCurrentOrders(false, trade.getPrice(), trade.getVolume());
-        }
+        arb.removeFromCurrentOrders(trade.getOrderId());
+        // System.out.println("Executed a trade!");
     }
 
     /*
@@ -81,6 +71,7 @@ public class HitterHandler implements OrderBookHandler
      */
     public void handleError(com.imc.intern.exchange.datamodel.api.Error error)
     {
-
+        // remove a order that was accidentally added when making an order
+        arb.removeFromCurrentOrders(error.getRequestId());
     }
 }

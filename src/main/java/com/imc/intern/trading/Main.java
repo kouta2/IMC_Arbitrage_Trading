@@ -16,10 +16,15 @@ import java.util.*;
 
 public class Main
 {
-    private static final String EXCHANGE_URL = "tcp://wintern.imc.com:61616";
+    // private static final String EXCHANGE_URL = "tcp://wintern.imc.com:61616";
+    private static final String EXCHANGE_URL = "tcp://54.227.125.23:61616";
     private static final String USERNAME = "akouta";
     private static final String PASSWORD = "meant trip meat wear";
     private static final String BOOK = "AKO1";
+
+    private static final String TACO = "AKO.TACO";
+    private static final String BEEF = "AKO.BEEF";
+    private static final String TORTILLA = "AKO.TORTILLA";
 
     private final int book_size = 3;
     private final double target = 20;
@@ -29,13 +34,16 @@ public class Main
 
     private final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-
     /*
     Sets up my handlers
      */
-    public static void add_handlers(RemoteExchangeView rmt_exch) // , HashMap<Long, MyOrder> my_orders, HashMap<Double, Integer> my_bids, HashMap<Double, Integer> my_asks, HashSet<OwnTrade> transactions, ArrayList<Order> bids, ArrayList<Order> asks)
+    public static void add_handlers(RemoteExchangeView rmt_exch)
     {
-        rmt_exch.subscribe(Symbol.of(BOOK), new HitterHandler(rmt_exch, BOOK));
+        Arbitrage a = new Arbitrage(new BookHandler(TACO), new BookHandler(TORTILLA), new BookHandler(BEEF), rmt_exch);
+        rmt_exch.subscribe(Symbol.of(TACO), new HitterHandler(rmt_exch, a)); // new TacoStrategy()));
+        // rmt_exch.subscribe(Symbol.of(TORTILLA), new HitterHandler(rmt_exch, BOOK, new TortillaStrategy()));
+        // rmt_exch.subscribe(Symbol.of(BEEF), new HitterHandler(rmt_exch, BOOK, new BeefStrategy()));
+
     }
 
     public static void main(String[] args) throws Exception
@@ -43,11 +51,8 @@ public class Main
         ExchangeClient client = ExchangeClient.create(EXCHANGE_URL, Account.of(USERNAME), PASSWORD);
         RemoteExchangeView rmt_exch = client.getExchangeView();
 
-        add_handlers(rmt_exch); // , order_ids, my_bids, my_asks, transactions, bids, asks);
-
-        int price = 130;
-        int volume = 52;
         client.start();
+        add_handlers(rmt_exch);
         // client.stop();
     }
 }
