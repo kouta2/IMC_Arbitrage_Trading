@@ -13,4 +13,5 @@ public class MainTest
         Main.add_handlers(exchangeView);
         Mockito.verify(exchangeView).subscribe(Mockito.any(), Mockito.any(HitterHandler.class));
     }
+
 }

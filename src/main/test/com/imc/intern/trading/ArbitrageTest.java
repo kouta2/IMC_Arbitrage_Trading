@@ -1,5 +1,8 @@
 package com.imc.intern.trading;
 
+import org.junit.Test;
+import org.mockito.Mockito;
+
 import static org.junit.Assert.*;
 
 /**
@@ -8,4 +11,14 @@ import static org.junit.Assert.*;
 public class ArbitrageTest
 {
 
+    @Test
+    public void testPlaceSellOrders()
+    {
+        Arbitrage a = Mockito.mock(Arbitrage.class);
+        a.executeSellTacoOrders();
+        // Mockito.verify();
+
+
+
+    }
 }
