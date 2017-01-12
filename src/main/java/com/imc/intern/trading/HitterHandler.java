@@ -21,6 +21,8 @@ public class HitterHandler implements OrderBookHandler
     private HashMap<Symbol, BookHandler> symbol_to_book;
     private static final Logger LOGGER = LoggerFactory.getLogger(Arbitrage.class);
 
+    private int num_trades;
+
     // private num_taco_trades;
 
     public HitterHandler(ExchangeView r, String taco, String beef, String tortilla)
@@ -66,8 +68,11 @@ public class HitterHandler implements OrderBookHandler
         // LOGGER.info("Executed a trade!");
         // arb.handleMyOrders(trade);
 
-        arb.update_actual_pos(trade);
-        arb.placeGTCOrdersWhereNeeded(trade);
+        // arb.update_actual_pos(trade);
+        // arb.placeGTCOrdersWhereNeeded(trade);
+
+        num_trades++;
+        LOGGER.info("" + num_trades);
     }
 
     /*

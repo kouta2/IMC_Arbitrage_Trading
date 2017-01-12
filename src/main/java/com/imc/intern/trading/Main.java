@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.print.Book;
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Main
 {
@@ -57,6 +58,12 @@ public class Main
 
         client.start();
         add_handlers(rmt_exch);
-        // client.stop();
+        // fixMyPosition(rmt_exch, 25.75, 12, OrderType.GOOD_TIL_CANCEL, Side.BUY, 15.55, 26, OrderType.GOOD_TIL_CANCEL, Side.BUY);
+    }
+
+    public static void fixMyPosition(ExchangeView rmt_exch, double p_beef, int v_beef, OrderType o_beef, Side s_beef, double p_tort, int v_tort, OrderType o_tort, Side s_tort)
+    {
+        rmt_exch.createOrder(Symbol.of(BEEF), p_beef, v_beef, o_beef, s_beef);
+        rmt_exch.createOrder(Symbol.of(TORTILLA), p_tort, v_tort, o_tort, s_tort);
     }
 }

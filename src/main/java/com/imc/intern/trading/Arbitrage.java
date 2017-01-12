@@ -14,6 +14,7 @@ import sun.jvm.hotspot.debugger.cdbg.Sym;
 import sun.reflect.generics.tree.Tree;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by imc on 11/01/2017.
@@ -52,6 +53,8 @@ public class Arbitrage
         tortilla = to;
         rmt_exch = r;
         order_placer = new OrderPlacer(rmt_exch);
+        ioc_limiter.setRate(1.0/35.0);
+        // ioc_limiter.s;
     }
 
     /*
@@ -163,7 +166,6 @@ public class Arbitrage
             num_beef_trades += min_volume;
             num_tort_trades += min_volume;
             ioc_limiter.acquire();
-            // ioc_limiter.
             LOGGER.info("SOLD!!! because I can sell taco at " + taco_best_bid_price + " and buy back beef and tortilla at " + (beef_best_ask_price + tortilla_best_ask_price));
         }
     }
@@ -185,6 +187,7 @@ public class Arbitrage
             num_beef_trades -= min_volume;
             num_tort_trades -= min_volume;
             ioc_limiter.acquire();
+
             LOGGER.info("BOUGHT!!! I can buy taco at " + taco_best_ask_price + " and sell back beef and tortilla at " + (beef_best_bid_price + tortilla_best_bid_price));
         }
     }
@@ -193,7 +196,7 @@ public class Arbitrage
     {
         String book = trade.getBook().toString();
         Side s = trade.getSide();
-        int volume = trade.getVolume();
+        int volume = Math.min(100, trade.getVolume());
         if(book.equals(taco.getBookName()))
             actual_num_taco_trades = s == Side.BUY ? actual_num_taco_trades + volume : actual_num_taco_trades - volume;
         else if(book.equals(beef.getBookName()))
@@ -204,7 +207,7 @@ public class Arbitrage
 
     private int calculateVolume(int taco_v, int beef_v, int tort_v)
     {
-        return Math.min(10, Math.min(taco_v, Math.min(beef_v, tort_v)));
+        return Math.min(100, Math.min(taco_v, Math.min(beef_v, tort_v)));
     }
 
     void removeFromCurrentOrders(long orderId)
