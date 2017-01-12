@@ -17,9 +17,5 @@ public class ArbitrageTest
     {
         Arbitrage a = Mockito.mock(Arbitrage.class);
         a.executeSellTacoOrders();
-        // Mockito.verify();
-
-
-
     }
 }

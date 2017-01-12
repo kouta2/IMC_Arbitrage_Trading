@@ -82,7 +82,7 @@ public class Arbitrage
         curr = tortilla.getAsks();
         if(curr.size() == 0)
             return;
-        System.out.println("sell"); // NAJ: use logger, we did a find/replace on all System.out calls so this is new.
+        LOGGER.info("sell"); // NAJ: use logger, we did a find/replace on all System.out calls so this is new.
         Double tortilla_best_ask_price = curr.firstKey();
         Integer tortilla_best_ask_volume = 0;
         if(tortilla_best_ask_price != null)
@@ -90,7 +90,7 @@ public class Arbitrage
 
         if(taco_best_bid_price != null && beef_best_ask_price != null && tortilla_best_ask_price != null)
         {
-            LOGGER.info("taco bid: " + taco_best_bid_price + " should be > beef ask + tortilla ask " + (beef_best_ask_price + tortilla_best_ask_price));
+            // LOGGER.info("taco bid: " + taco_best_bid_price + " should be > beef ask + tortilla ask " + (beef_best_ask_price + tortilla_best_ask_price));
             placeSellOrdersOnTaco(taco_best_bid_price, taco_best_bid_volume, beef_best_ask_price, beef_best_ask_volume, tortilla_best_ask_price, tortilla_best_ask_volume);
         }
     }
@@ -127,7 +127,7 @@ public class Arbitrage
         System.out.println("buy");
         if(taco_best_ask_price != null && beef_best_bid_price != null && tortilla_best_bid_price != null)
         {
-            LOGGER.info("taco ask: " + taco_best_ask_price + " should be < beef bid + tortilla bid " + (beef_best_bid_price + tortilla_best_bid_price));
+            // LOGGER.info("taco ask: " + taco_best_ask_price + " should be < beef bid + tortilla bid " + (beef_best_bid_price + tortilla_best_bid_price));
             placeBuyOrdersOnTaco(taco_best_ask_price, taco_best_ask_volume, beef_best_bid_price, beef_best_bid_volume, tortilla_best_bid_price, tortilla_best_bid_volume);
         }
 
@@ -145,12 +145,7 @@ public class Arbitrage
             int min_volume = Math.min(taco_best_bid_volume, Math.min(beef_best_ask_volume, tortilla_best_ask_volume));
             if(min_volume <= 0)
                 return;
-            long order_id = rmt_exch.createOrder(Symbol.of(taco.getBookName()), taco_best_bid_price, min_volume, OrderType.IMMEDIATE_OR_CANCEL, Side.SELL);
-            my_orders.put(order_id, new MyOrder(order_id, taco_best_bid_price, min_volume, OrderType.IMMEDIATE_OR_CANCEL, Side.SELL));
-            if(my_asks.containsKey(taco_best_bid_price))
-                my_asks.put(taco_best_bid_price, my_asks.get(taco_best_bid_price) + min_volume);
-            else
-                my_asks.put(taco_best_bid_price, min_volume);
+            placeTheOrder(Symbol.of(taco.getBookName()), taco_best_bid_price, min_volume, OrderType.IMMEDIATE_OR_CANCEL, Side.SELL);
             LOGGER.info("SOLD!!! because I can sell taco at " + taco_best_bid_price + " and buy back beef and tortilla at " + (beef_best_ask_price + tortilla_best_ask_price));
         }
     }
@@ -165,14 +160,25 @@ public class Arbitrage
             int min_volume = Math.min(taco_best_ask_volume, Math.min(beef_best_bid_volume, tortilla_best_bid_volume));
             if(min_volume <= 0)
                 return;
-            long order_id = rmt_exch.createOrder(Symbol.of(taco.getBookName()), taco_best_ask_price, min_volume, OrderType.IMMEDIATE_OR_CANCEL, Side.BUY);
-            my_orders.put(order_id, new MyOrder(order_id, taco_best_ask_price, min_volume, OrderType.IMMEDIATE_OR_CANCEL, Side.BUY));
-            if(my_bids.containsKey(taco_best_ask_price))
-                my_bids.put(taco_best_ask_price, my_bids.get(taco_best_ask_price) + min_volume);
-            else
-                my_bids.put(taco_best_ask_price, min_volume);
+            placeTheOrder(Symbol.of(taco.getBookName()), taco_best_ask_price, min_volume, OrderType.IMMEDIATE_OR_CANCEL, Side.BUY);
             LOGGER.info("BOUGHT!!! I can buy taco at " + taco_best_ask_price + " and sell back beef and tortilla at " + (beef_best_bid_price + tortilla_best_bid_price));
         }
+    }
+
+    public void placeTheOrder(Symbol s, double p, int v, OrderType o, Side si)
+    {
+        long order_id = rmt_exch.createOrder(s, p, v, o, si);
+        /*
+        my_orders.put(order_id, new MyOrder(order_id, p, v, o, si));
+        if(si == Side.BUY && my_bids.containsKey(p))
+        {
+            my_bids.put(p, my_bids.get(p) + v);
+        }
+        else if(si == Side.SELL && my_asks.containsKey(p))
+        {
+            my_asks.put(p, my_asks.get(p) + v)
+        }
+        */
     }
 
     void removeFromCurrentOrders(long orderId)

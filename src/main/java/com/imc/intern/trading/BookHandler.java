@@ -60,7 +60,7 @@ public class BookHandler
             if(volume == null)
             {
                 bids.put(price, l.getVolume());
-                if(bids.size() == 4)
+                if(bids.size() == book_size)
                     bids.remove(bids.lastKey());
             }
             else
@@ -76,7 +76,7 @@ public class BookHandler
             if(volume == null)
             {
                 asks.put(price, l.getVolume());
-                if(asks.size() == 4)
+                if(asks.size() == book_size)
                     asks.remove(asks.lastKey());
             }
             else
@@ -92,7 +92,7 @@ public class BookHandler
     // NAJ: "update_book_tree" is more clear here
     public void update_book_helper(List<RetailState.Level> book, boolean bids_book)
     {
-        TreeMap<Double, Integer> temp = bids_book ? bids : asks;
+        TreeMap<Double, Integer> temp = bids_book == true ? bids : asks;
         for(RetailState.Level l : book)
         {
             // NAJ: price should be Double
@@ -101,7 +101,7 @@ public class BookHandler
             if(volume == null)
             {
                 temp.put(price, l.getVolume());
-                if(temp.size() == 3)
+                if(temp.size() == book_size)
                     temp.remove(temp.lastKey());
             }
             else
