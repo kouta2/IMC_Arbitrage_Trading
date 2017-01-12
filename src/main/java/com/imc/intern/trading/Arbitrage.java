@@ -137,21 +137,18 @@ public class Arbitrage
      */
     public void placeSellOrdersOnTaco(double taco_best_bid_price, int taco_best_bid_volume, double beef_best_ask_price, int beef_best_ask_volume, double tortilla_best_ask_price, int tortilla_best_ask_volume)
     {
-        if(taco_best_bid_price > -1 && beef_best_ask_price > -1 && tortilla_best_ask_price > -1)
+        if(taco_best_bid_price - offset > beef_best_ask_price + tortilla_best_ask_price)
         {
-            if(taco_best_bid_price - offset > beef_best_ask_price + tortilla_best_ask_price)
-            {
-                int min_volume = Math.min(taco_best_bid_volume, Math.min(beef_best_ask_volume, tortilla_best_ask_volume));
-                if(min_volume <= 0)
-                    return;
-                long order_id = rmt_exch.createOrder(Symbol.of(taco.getBookName()), taco_best_bid_price, min_volume, OrderType.IMMEDIATE_OR_CANCEL, Side.SELL);
-                my_orders.put(order_id, new MyOrder(order_id, taco_best_bid_price, min_volume, OrderType.IMMEDIATE_OR_CANCEL, Side.SELL));
-                if(my_asks.containsKey(taco_best_bid_price))
-                    my_asks.put(taco_best_bid_price, my_asks.get(taco_best_bid_price) + min_volume);
-                else
-                    my_asks.put(taco_best_bid_price, min_volume);
-                LOGGER.info("SOLD!!! because I can sell taco at " + taco_best_bid_price + " and buy back beef and tortilla at " + (beef_best_ask_price + tortilla_best_ask_price));
-            }
+            int min_volume = Math.min(taco_best_bid_volume, Math.min(beef_best_ask_volume, tortilla_best_ask_volume));
+            if(min_volume <= 0)
+                return;
+            long order_id = rmt_exch.createOrder(Symbol.of(taco.getBookName()), taco_best_bid_price, min_volume, OrderType.IMMEDIATE_OR_CANCEL, Side.SELL);
+            my_orders.put(order_id, new MyOrder(order_id, taco_best_bid_price, min_volume, OrderType.IMMEDIATE_OR_CANCEL, Side.SELL));
+            if(my_asks.containsKey(taco_best_bid_price))
+                my_asks.put(taco_best_bid_price, my_asks.get(taco_best_bid_price) + min_volume);
+            else
+                my_asks.put(taco_best_bid_price, min_volume);
+            LOGGER.info("SOLD!!! because I can sell taco at " + taco_best_bid_price + " and buy back beef and tortilla at " + (beef_best_ask_price + tortilla_best_ask_price));
         }
     }
 
@@ -160,23 +157,19 @@ public class Arbitrage
      */
     public void placeBuyOrdersOnTaco(double taco_best_ask_price, int taco_best_ask_volume, double beef_best_bid_price, int beef_best_bid_volume, double tortilla_best_bid_price, int tortilla_best_bid_volume)
     {
-        if(taco_best_ask_price > -1 && beef_best_bid_price > -1 && tortilla_best_bid_price > -1)
+        if(taco_best_ask_price + offset < beef_best_bid_price + tortilla_best_bid_price)
         {
-            if(taco_best_ask_price + offset < beef_best_bid_price + tortilla_best_bid_price)
-            {
-                int min_volume = Math.min(taco_best_ask_volume, Math.min(beef_best_bid_volume, tortilla_best_bid_volume));
-                if(min_volume <= 0)
-                    return;
-                long order_id = rmt_exch.createOrder(Symbol.of(taco.getBookName()), taco_best_ask_price, min_volume, OrderType.IMMEDIATE_OR_CANCEL, Side.BUY);
-                my_orders.put(order_id, new MyOrder(order_id, taco_best_ask_price, min_volume, OrderType.IMMEDIATE_OR_CANCEL, Side.BUY));
-                if(my_bids.containsKey(taco_best_ask_price))
-                    my_bids.put(taco_best_ask_price, my_bids.get(taco_best_ask_price) + min_volume);
-                else
-                    my_bids.put(taco_best_ask_price, min_volume);
-                LOGGER.info("BOUGHT!!! I can buy taco at " + taco_best_ask_price + " and sell back beef and tortilla at " + (beef_best_bid_price + tortilla_best_bid_price));
-            }
+            int min_volume = Math.min(taco_best_ask_volume, Math.min(beef_best_bid_volume, tortilla_best_bid_volume));
+            if(min_volume <= 0)
+                return;
+            long order_id = rmt_exch.createOrder(Symbol.of(taco.getBookName()), taco_best_ask_price, min_volume, OrderType.IMMEDIATE_OR_CANCEL, Side.BUY);
+            my_orders.put(order_id, new MyOrder(order_id, taco_best_ask_price, min_volume, OrderType.IMMEDIATE_OR_CANCEL, Side.BUY));
+            if(my_bids.containsKey(taco_best_ask_price))
+                my_bids.put(taco_best_ask_price, my_bids.get(taco_best_ask_price) + min_volume);
+            else
+                my_bids.put(taco_best_ask_price, min_volume);
+            LOGGER.info("BOUGHT!!! I can buy taco at " + taco_best_ask_price + " and sell back beef and tortilla at " + (beef_best_bid_price + tortilla_best_bid_price));
         }
-
     }
 
     void removeFromCurrentOrders(long orderId)

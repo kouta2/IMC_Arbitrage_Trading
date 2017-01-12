@@ -47,10 +47,11 @@ public class BookHandler
     {
 
         List<RetailState.Level> curr_bids = rtl_state.getBids();
-        // update_book_helper(curr_bids, true);
+        update_book_helper(curr_bids, true);
         List<RetailState.Level> curr_asks = rtl_state.getAsks();
-        // update_book_helper(curr_asks, false);
+        update_book_helper(curr_asks, false);
 
+        /*
         for(RetailState.Level l : curr_bids)
         {
             double price = l.getPrice();
@@ -83,6 +84,7 @@ public class BookHandler
             }
         }
         System.out.println("bid book size is " + bids.size() + " and ask book size is " + asks.size());
+        */
 
     }
 
