@@ -4,6 +4,10 @@ import com.imc.intern.exchange.client.RemoteExchangeView;
 import com.imc.intern.exchange.datamodel.Side;
 import com.imc.intern.exchange.datamodel.api.*;
 import com.imc.intern.exchange.datamodel.jms.ExposureUpdate;
+import com.imc.intern.exchange.views.ExchangeView;
+import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -12,12 +16,14 @@ import java.util.*;
  */
 public class HitterHandler implements OrderBookHandler
 {
-    private RemoteExchangeView rmt_exch;
+    private ExchangeView rmt_exch;
     private Arbitrage arb;
-    HashMap<Symbol, BookHandler> symbol_to_book; // NAJ: private
+    private HashMap<Symbol, BookHandler> symbol_to_book;
+    private static final Logger LOGGER = LoggerFactory.getLogger(Arbitrage.class);
 
+    // private num_taco_trades;
 
-    public HitterHandler(RemoteExchangeView r, String taco, String beef, String tortilla)// String order_book, StrategyHandler pattern)
+    public HitterHandler(ExchangeView r, String taco, String beef, String tortilla)
     {
         rmt_exch = r;
         arb = new Arbitrage(new BookHandler(taco), new BookHandler(beef), new BookHandler(tortilla), rmt_exch);
@@ -27,16 +33,15 @@ public class HitterHandler implements OrderBookHandler
         symbol_to_book.put(Symbol.of(tortilla), arb.getTortillaBook());
     }
 
-    // NAJ: this comment is not true. On connection, will receive top 5 levels of depth, then updates.
     /*
-    called every 10 seconds and when ever the book changes
+    called on connection and whenever there are updates
     */
     public void handleRetailState(RetailState retailState)
     {
         Symbol s = retailState.getBook();
-//        System.out.println("book is: " + s.toString());
-//        System.out.println("bids " + retailState.getBids().toString());
-//        System.out.println("asks " + retailState.getAsks().toString() + "\n");
+//        LOGGER.info("book is: " + s.toString());
+//        LOGGER.info("bids " + retailState.getBids().toString());
+//        LOGGER.info("asks " + retailState.getAsks().toString() + "\n");
 
         symbol_to_book.get(s).update_book(retailState);
         arb.executeOrders();
@@ -55,9 +60,14 @@ public class HitterHandler implements OrderBookHandler
      */
     public void handleOwnTrade(OwnTrade trade)
     {
+
         // arb.removeFromCurrentOrders(trade.getOrderId());
-        // System.out.println("Executed a trade!");
-        arb.handleMyOrders(trade);
+        LOGGER.info(trade.toString());
+        // LOGGER.info("Executed a trade!");
+        // arb.handleMyOrders(trade);
+
+        arb.update_actual_pos(trade);
+        arb.placeGTCOrdersWhereNeeded(trade);
     }
 
     /*
@@ -74,7 +84,8 @@ public class HitterHandler implements OrderBookHandler
     public void handleError(com.imc.intern.exchange.datamodel.api.Error error)
     {
         // remove a order that was accidentally added when making an order
-        arb.removeFromCurrentOrders(error.getRequestId());
-        // NAJ: would log if there is an error
+        // arb.removeFromCurrentOrders(error.getRequestId());
+        LOGGER.info(error.toString());
+
     }
 }

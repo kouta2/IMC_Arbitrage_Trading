@@ -6,6 +6,7 @@ import com.imc.intern.exchange.datamodel.Side;
 import com.imc.intern.exchange.datamodel.api.*;
 import com.imc.intern.exchange.datamodel.api.Error;
 import com.imc.intern.exchange.datamodel.jms.ExposureUpdate;
+import com.imc.intern.exchange.views.ExchangeView;
 import com.sun.tools.javac.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,19 +42,18 @@ public class Main
     /*
     Sets up my handlers
      */
-    public static void add_handlers(RemoteExchangeView rmt_exch)
+    public static void add_handlers(ExchangeView rmt_exch)
     {
-        // NAJ: Typically names should reflect what they are, here "h" does not mean much to me. Maybe handler would be nice here.
-        HitterHandler h = new HitterHandler(rmt_exch, TACO, BEEF, TORTILLA);
-        rmt_exch.subscribe(Symbol.of(TACO), h);
-        rmt_exch.subscribe(Symbol.of(BEEF), h);
-        rmt_exch.subscribe(Symbol.of(TORTILLA), h);
+        HitterHandler handler = new HitterHandler(rmt_exch, TACO, BEEF, TORTILLA);
+        rmt_exch.subscribe(Symbol.of(TACO), handler);
+        rmt_exch.subscribe(Symbol.of(BEEF), handler);
+        rmt_exch.subscribe(Symbol.of(TORTILLA), handler);
     }
 
     public static void main(String[] args) throws Exception
     {
         ExchangeClient client = ExchangeClient.create(EXCHANGE_URL, Account.of(USERNAME), PASSWORD);
-        RemoteExchangeView rmt_exch = client.getExchangeView(); // NAJ: I would use ExchangeView instead of RemoteExchangeView
+        ExchangeView rmt_exch = client.getExchangeView();
 
         client.start();
         add_handlers(rmt_exch);
