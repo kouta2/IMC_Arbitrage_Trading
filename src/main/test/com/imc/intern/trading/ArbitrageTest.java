@@ -10,6 +10,7 @@ import static org.junit.Assert.*;
  */
 public class ArbitrageTest
 {
+    // NAJ: Your arbitrage class is getting complex, tests are a way to make sure changes won't break current functionality
 
     @Test
     public void testPlaceSellOrders()

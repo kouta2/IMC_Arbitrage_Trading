@@ -16,7 +16,7 @@ public class BookHandler
     // private ArrayList<Order> bids = new ArrayList<>(); // keeps track of the bids in the book
     // private ArrayList<Order> asks = new ArrayList<>(); // keeps track of the asks in the book
     private TreeMap<Double, Integer> bids = new TreeMap<>();
-    private TreeMap<Double, Integer> asks = new TreeMap<>();
+    private TreeMap<Double, Integer> asks = new TreeMap<>(); // NAJ: probably want to sort in reverse order here, can pass comparator
 
     BookHandler(String order_book)
     {
@@ -36,7 +36,7 @@ public class BookHandler
     int getBookSize()
     {
         return book_size;
-    }
+    } // NAJ: unused
 
     String getBookName()
     {
@@ -51,6 +51,7 @@ public class BookHandler
         List<RetailState.Level> curr_asks = rtl_state.getAsks();
         update_book_helper(curr_asks, false);
 
+        // NAJ: you can delete code and reference it from git, I'd refrain from leaving unused code around.
         /*
         for(RetailState.Level l : curr_bids)
         {
@@ -88,12 +89,14 @@ public class BookHandler
 
     }
 
+    // NAJ: "update_book_tree" is more clear here
     public void update_book_helper(List<RetailState.Level> book, boolean bids_book)
     {
         TreeMap<Double, Integer> temp = bids_book ? bids : asks;
         for(RetailState.Level l : book)
         {
-            double price = l .getPrice();
+            // NAJ: price should be Double
+            double price = l.getPrice();
             Integer volume = temp.get(l.getPrice());
             if(volume == null)
             {
@@ -108,8 +111,10 @@ public class BookHandler
         }
     }
 
+    // NAJ: ditto on generate toString
     public void print_book()
     {
+        // NAJ: Use the logger as per 1on1.
         System.out.println("BIDS:\n" + bids.toString());
         System.out.println("ASKS:\n" + asks.toString());
         System.out.println("\n");

@@ -43,6 +43,7 @@ public class Main
      */
     public static void add_handlers(RemoteExchangeView rmt_exch)
     {
+        // NAJ: Typically names should reflect what they are, here "h" does not mean much to me. Maybe handler would be nice here.
         HitterHandler h = new HitterHandler(rmt_exch, TACO, BEEF, TORTILLA);
         rmt_exch.subscribe(Symbol.of(TACO), h);
         rmt_exch.subscribe(Symbol.of(BEEF), h);
@@ -52,7 +53,7 @@ public class Main
     public static void main(String[] args) throws Exception
     {
         ExchangeClient client = ExchangeClient.create(EXCHANGE_URL, Account.of(USERNAME), PASSWORD);
-        RemoteExchangeView rmt_exch = client.getExchangeView();
+        RemoteExchangeView rmt_exch = client.getExchangeView(); // NAJ: I would use ExchangeView instead of RemoteExchangeView
 
         client.start();
         add_handlers(rmt_exch);

@@ -54,6 +54,7 @@ public class Arbitrage
 
     }
 
+    // NAJ: there is quite a bit duplicate code between sellTaco and buyTaco, I'd work on a generic method for both
     /*
     checks if you should sell tacos and if you should, you create the order
      */
@@ -81,7 +82,7 @@ public class Arbitrage
         curr = tortilla.getAsks();
         if(curr.size() == 0)
             return;
-        System.out.println("sell");
+        System.out.println("sell"); // NAJ: use logger, we did a find/replace on all System.out calls so this is new.
         Double tortilla_best_ask_price = curr.firstKey();
         Integer tortilla_best_ask_volume = 0;
         if(tortilla_best_ask_price != null)
@@ -132,6 +133,8 @@ public class Arbitrage
 
     }
 
+
+    // NAJ: I would extract an order placer class and have it as its own responsibility. Also, there is quite a bit of code duplicated between placeSell and placeBuy
     /*
     places sell orders on tacos
      */
@@ -182,6 +185,7 @@ public class Arbitrage
         my_orders.remove(orderId);
     }
 
+    // NAJ: I would test this method to make sure its doing what you think its doing
     public void handleMyOrders(OwnTrade trade)
     {
         long order_id = trade.getOrderId();

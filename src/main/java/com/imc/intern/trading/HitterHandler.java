@@ -14,7 +14,7 @@ public class HitterHandler implements OrderBookHandler
 {
     private RemoteExchangeView rmt_exch;
     private Arbitrage arb;
-    HashMap<Symbol, BookHandler> symbol_to_book;
+    HashMap<Symbol, BookHandler> symbol_to_book; // NAJ: private
 
 
     public HitterHandler(RemoteExchangeView r, String taco, String beef, String tortilla)// String order_book, StrategyHandler pattern)
@@ -27,6 +27,7 @@ public class HitterHandler implements OrderBookHandler
         symbol_to_book.put(Symbol.of(tortilla), arb.getTortillaBook());
     }
 
+    // NAJ: this comment is not true. On connection, will receive top 5 levels of depth, then updates.
     /*
     called every 10 seconds and when ever the book changes
     */
@@ -74,5 +75,6 @@ public class HitterHandler implements OrderBookHandler
     {
         // remove a order that was accidentally added when making an order
         arb.removeFromCurrentOrders(error.getRequestId());
+        // NAJ: would log if there is an error
     }
 }
