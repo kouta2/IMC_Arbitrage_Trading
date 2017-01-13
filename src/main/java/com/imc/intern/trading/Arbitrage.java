@@ -1,24 +1,24 @@
 package com.imc.intern.trading;
 
 import com.google.common.util.concurrent.RateLimiter;
-import com.imc.intern.exchange.client.RemoteExchangeView;
 import com.imc.intern.exchange.datamodel.Side;
 import com.imc.intern.exchange.datamodel.api.OrderType;
 import com.imc.intern.exchange.datamodel.api.OwnTrade;
-import com.imc.intern.exchange.datamodel.api.RetailState;
 import com.imc.intern.exchange.datamodel.api.Symbol;
 import com.imc.intern.exchange.views.ExchangeView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.jvm.hotspot.debugger.cdbg.Sym;
-import sun.reflect.generics.tree.Tree;
 
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.TreeMap;
 
 /**
  * Created by imc on 11/01/2017.
  */
+// MWANG: THis looks mostly good, but as Naj mentioned has a lot of duplication and unused code - it makes it difficult
+// to tell if you have any bugs. Pulling out and reusing methods will help improve clarity, which makes it easier for
+// us to to read but also for you to tell if the code is correct.
 public class Arbitrage
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(Arbitrage.class);
