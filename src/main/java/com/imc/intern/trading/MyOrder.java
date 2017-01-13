@@ -6,29 +6,58 @@ import com.imc.intern.exchange.datamodel.api.OrderType;
 /**
  * Created by imc on 10/01/2017.
  */
-// NAJ: MyOrder should extend Order as it shares a few fields/getters
-public class MyOrder
+public class MyOrder extends MarketOrder
 {
-    MyOrder(long id, double p, int v, OrderType t, Side s)
+    public MyOrder(long id, double p, int v, OrderType t, Side s)
     {
+        super(p, v);
         order_id = id;
-        price = p;
-        volume = v;
         type = t;
         side = s;
     }
 
-    // NAJ: intelliJ can auto-generate toString for you, I'd give it a shot.
+    @Override
     public String toString()
     {
-        return "order id is: " + order_id + " price is: " + price + " volume is: " + volume + "OrderType is: " + type.toString() + " Side is: " + side.toString();
+        return "MyOrder{" + super.toString() +
+                "order_id=" + order_id +
+                ", type=" + type +
+                ", side=" + side +
+                '}';
     }
 
-    // NAJ: typically fields of a class are private and protected from interaction. I would privatise these and use intelliJ
-    // NAJ: to autogenerate setters/getters when you need them.
-    long order_id;
-    double price;
-    int volume;
-    OrderType type;
-    Side side;
+
+    private long order_id;
+    private OrderType type;
+    private Side side;
+
+    long getOrderId()
+    {
+        return order_id;
+    }
+
+    OrderType getType()
+    {
+        return type;
+    }
+
+    Side getSide()
+    {
+        return side;
+    }
+
+    public void setOrder_id(long order_id)
+    {
+        this.order_id = order_id;
+    }
+
+    public void setType(OrderType type)
+    {
+        this.type = type;
+    }
+
+    public void setSide(Side side)
+    {
+        this.side = side;
+    }
 }

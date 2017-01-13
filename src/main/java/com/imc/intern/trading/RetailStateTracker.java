@@ -9,17 +9,15 @@ import java.util.TreeMap;
 /**
  * Created by imc on 10/01/2017.
  */
-// MWANG: I suggest you name this class something else. "BookHandler" is pretty vague, so I had to read through the code
-// before I figured out what it was supposed to be doing. If you call it "RetailStateTracker" or "BookDepthManager" or
-// something like that then it is clearer.
-public class BookHandler
+
+public class RetailStateTracker
 {
     private final int book_size = 3;
     private String BOOK;
     private TreeMap<Double, Integer> bids = new TreeMap<>(Collections.reverseOrder());
     private TreeMap<Double, Integer> asks = new TreeMap<>(); // NAJ: probably want to sort in reverse order here, can pass comparator
 
-    BookHandler(String order_book)
+    RetailStateTracker(String order_book)
     {
         BOOK = order_book;
     }

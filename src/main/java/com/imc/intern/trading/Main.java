@@ -38,7 +38,7 @@ public class Main
 
     private int count = 0;
 
-    private final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     /*
     Sets up my handlers
@@ -58,12 +58,23 @@ public class Main
 
         client.start();
         add_handlers(rmt_exch);
-        // fixMyPosition(rmt_exch, 25.75, 12, OrderType.GOOD_TIL_CANCEL, Side.BUY, 15.55, 26, OrderType.GOOD_TIL_CANCEL, Side.BUY);
+
+        // cancel(rmt_exch);
+        // fixMyPosition(rmt_exch, 24.5, 66, OrderType.GOOD_TIL_CANCEL, Side.SELL, 14.85, 66, OrderType.GOOD_TIL_CANCEL, Side.SELL);
+
     }
 
-    public static void fixMyPosition(ExchangeView rmt_exch, double p_beef, int v_beef, OrderType o_beef, Side s_beef, double p_tort, int v_tort, OrderType o_tort, Side s_tort)
+    public static void fixMyPosition(ExchangeView rmt_exch, double p_beef, int v_beef, OrderType o_beef, Side s_beef, double p_tort, int v_tort, OrderType o_tort, Side s_tort) throws Exception
     {
-        rmt_exch.createOrder(Symbol.of(BEEF), p_beef, v_beef, o_beef, s_beef);
-        rmt_exch.createOrder(Symbol.of(TORTILLA), p_tort, v_tort, o_tort, s_tort);
+        // Map<Symbol, List<OwnTrade>> trades = rmt_exch.getTrades();
+        // LOGGER.info(rmt_exch.createOrder(Symbol.of(BEEF), p_beef, v_beef, o_beef, s_beef) + "");
+        // LOGGER.info("" + rmt_exch.createOrder(Symbol.of(TORTILLA), p_tort, v_tort, o_tort, s_tort));
+    }
+
+    public static void cancel(ExchangeView rmt_exch)
+    {
+        //rmt_exch.massCancel(Symbol.of(TACO));
+        // rmt_exch.massCancel(Symbol.of(BEEF));
+        // rmt_exch.massCancel(Symbol.of(TORTILLA));
     }
 }

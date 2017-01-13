@@ -18,7 +18,7 @@ public class HitterHandler implements OrderBookHandler
 {
     private ExchangeView rmt_exch;
     private Arbitrage arb;
-    private HashMap<Symbol, BookHandler> symbol_to_book;
+    private HashMap<Symbol, RetailStateTracker> symbol_to_book;
     private static final Logger LOGGER = LoggerFactory.getLogger(Arbitrage.class);
 
     private int num_trades;
@@ -28,7 +28,7 @@ public class HitterHandler implements OrderBookHandler
     public HitterHandler(ExchangeView r, String taco, String beef, String tortilla)
     {
         rmt_exch = r;
-        arb = new Arbitrage(new BookHandler(taco), new BookHandler(beef), new BookHandler(tortilla), rmt_exch);
+        arb = new Arbitrage(new RetailStateTracker(taco), new RetailStateTracker(beef), new RetailStateTracker(tortilla), rmt_exch);
         symbol_to_book = new HashMap<>();
         symbol_to_book.put(Symbol.of(taco), arb.getTacoBook());
         symbol_to_book.put(Symbol.of(beef), arb.getBeefBook());
@@ -55,6 +55,7 @@ public class HitterHandler implements OrderBookHandler
     public void handleExposures(ExposureUpdate exposures)
     {
         // update volume of order
+        LOGGER.info(exposures.toString());
     }
 
     /*
@@ -80,7 +81,7 @@ public class HitterHandler implements OrderBookHandler
      */
     public void handleTrade(Trade trade)
     {
-
+        // LOGGER.info(trade.toString());
     }
 
     /*

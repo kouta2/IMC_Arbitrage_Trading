@@ -4,16 +4,18 @@ package com.imc.intern.trading;
  * Created by imc on 10/01/2017.
  */
 
-public class Order
+public class MarketOrder
 {
     // NAJ: I would rename Order to "MarketOrder" so its clear. Order is ambiguous
-    Order(double p, int v)
+    MarketOrder(double p, int v)
     {
         price = p;
         volume = v;
     }
 
     private double price;
+    private int volume;
+
 
     @Override
     public String toString()
@@ -23,8 +25,6 @@ public class Order
                 ", volume=" + volume +
                 '}';
     }
-
-    private int volume;
 
     public double getPrice()
     {
